@@ -8,11 +8,9 @@
             box-sizing: border-box;
         }
 
-        body {
-            text-align: center;
+        html, body {
+            overflow: hidden;
             background: #eee;
-            max-width: 800px;
-            max-height: 600px;
         }
 
         section {
@@ -126,11 +124,10 @@
         .styled-table {
             border-collapse: collapse;
             margin: 0 0;
-            font-size: 1em;
+            font-size: 0.75em;
             font-family: sans-serif;
-            min-width: 500px;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
-            margin-bottom: 3em;
+            margin-bottom: 1em;
         }
 
         .styled-table thead tr {
@@ -193,30 +190,32 @@
     <title>Tracker</title>
 </head>
 <body>
-<!--maximum height of 600px and maximum width of 800px.-->
-<div style="width: auto; display: flex; margin-bottom: 5px">
-    <div style="padding-right: 10px">
-        Alert Threshold:
-        <input type="range" id="alertLevel" min="1" max="6" style="width: 100px; margin-right: 10px; margin-top: 4px;">
-        <label for="alertLevel"></label>
-    </div>
-
-    <div style="margin-right: 5px;">
-        Activity Alert (d2jsp.org):
-    </div>
-
-    <section class="model-1" style="margin-right: 50px; margin-top: 3px;">
-        <div class="checkbox">
-            <input type="checkbox" id="toggleJsp"><label for="toggleJsp"></label>
+<div style="flex-flow: row nowrap;">
+    <div style="display: flex; margin-bottom: 5px">
+        <div style="padding-right: 10px">
+            Alert Threshold:
+            <input type="range" id="alertLevel" min="1" max="6"
+                   style="width: 100px; margin-right: 10px; margin-top: 4px;">
+            <label for="alertLevel"></label>
         </div>
-    </section>
-</div>
-<div style="width: auto;" id="dcloneProgress">loading...</div>
 
-<div>Data courtesy of
-    <a href="https://diablo2.io/">diablo2.io</a>.
-    <a href="https://diablo2.io/forums/diablo-clone-uber-diablo-tracker-public-api-t906872.html"> API</a>
+        <div style="margin-right: 5px;">
+            Activity Alert (d2jsp.org):
+        </div>
+
+        <section class="model-1" style="margin-right: 50px; margin-top: 3px;">
+            <div class="checkbox">
+                <input type="checkbox" id="toggleJsp"><label for="toggleJsp"></label>
+            </div>
+        </section>
+    </div>
+    <div style="width: 800px;" id="dcloneProgress">loading...</div>
+    <div>Data courtesy of
+        <a href="https://diablo2.io/">diablo2.io</a>.
+        <a href="https://diablo2.io/forums/diablo-clone-uber-diablo-tracker-public-api-t906872.html"> API</a>
+    </div>
 </div>
+
 
 <script src="diablo2io.js"></script>
 <script src="jsporg.js"></script>

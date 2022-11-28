@@ -1,8 +1,24 @@
 {
-  "name": "dclone_tracker",
-  "description": "Diablo Clone Tracker",
-  "version": "2.0",
   "manifest_version": 3,
+  "name": "Diablo Clone Tracker",
+  "version": "2.0",
+  "action": {
+    "default_title": "Open the diablo clone tracker",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "/images/icon.png",
+      "32": "/images/icon.png",
+      "48": "/images/icon.png",
+      "128": "/images/icon.png"
+    }
+  },
+  "description": "Tracker with notification system for the Diablo Clone events in D2R.",
+  "icons": {
+    "16": "/images/icon.png",
+    "32": "/images/icon.png",
+    "48": "/images/icon.png",
+    "128": "/images/icon.png"
+  },
   "background": {
     "service_worker": "background.js"
   },
@@ -16,21 +32,5 @@
   "host_permissions": [
     "https://diablo2.io/",
     "https://forums.d2jsp.org/"
-  ],
-  "action": {
-    "default_popup": "popup.html",
-    "default_icon": {
-      "16": "/images/icon.png",
-      "32": "/images/icon.png",
-      "48": "/images/icon.png",
-      "128": "/images/icon.png"
-    }
-  },
-  "icons": {
-    "16": "/images/icon.png",
-    "32": "/images/icon.png",
-    "48": "/images/icon.png",
-    "128": "/images/icon.png"
-  },
-  "options_page": "options.html"
+  ]
 }
