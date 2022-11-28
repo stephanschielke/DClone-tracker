@@ -95,17 +95,13 @@ function createProgressBar(progress, total) {
   const progressDiv = document.createElement('div');
   progressDiv.className = 'progress-segment'
 
-  let i = 0;
-  for (; i < progress; i++) {
+  for (var i = 0; i < total; i++) {
     const itemDiv = document.createElement('div');
     itemDiv.classList.add('item')
-    itemDiv.classList.add('my-common')
-    progressDiv.appendChild(itemDiv)
-  }
+    if (i < progress) {
+      itemDiv.classList.add('my-common')
+    }
 
-  for (; i < total; i++) {
-    const itemDiv = document.createElement('div');
-    itemDiv.classList.add('item')
     progressDiv.appendChild(itemDiv)
   }
 
