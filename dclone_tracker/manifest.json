@@ -6,18 +6,18 @@
     "default_title": "Open the diablo clone tracker",
     "default_popup": "popup.html",
     "default_icon": {
-      "16": "/images/icon.png",
-      "32": "/images/icon.png",
-      "48": "/images/icon.png",
-      "128": "/images/icon.png"
+      "16": "/images/bluecharm_graphic.png",
+      "32": "/images/bluecharm_graphic.png",
+      "48": "/images/bluecharm_graphic.png",
+      "128": "/images/bluecharm_graphic.png"
     }
   },
   "description": "Tracker with notification system for the Diablo Clone events in D2R.",
   "icons": {
-    "16": "/images/icon.png",
-    "32": "/images/icon.png",
-    "48": "/images/icon.png",
-    "128": "/images/icon.png"
+    "16": "/images/bluecharm_graphic.png",
+    "32": "/images/bluecharm_graphic.png",
+    "48": "/images/bluecharm_graphic.png",
+    "128": "/images/bluecharm_graphic.png"
   },
   "background": {
     "service_worker": "background.js"
