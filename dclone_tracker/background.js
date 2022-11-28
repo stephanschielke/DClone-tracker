@@ -43,12 +43,15 @@ async function runDiablo2ioTask() {
  * Alert the user for a specific dclone progress entry.
  * @param entry A diablo2.io dclone progress entry.
  */
-function alertUserForEntry(entry) {
+async function alertUserForEntry(entry) {
   // Unfortunately, no new line breaks are allowed. Keeping it short but precise.
   const title = `${PROGRESS_MAPPING[entry.progress]} (${entry.progress}/${TOTAL_DCLONE_STATES})`
   const popupMessage = `Log in with your ${HC_SC_MAPPING[entry.hc]} ${LADDER_MAPPING[entry.ladder]} character to ${REGION_MAPPING[entry.region]} before it's too late!`;
   createPopupNotification(title, popupMessage);
   setExtensionBadge('NEW')
+  if (await getSoundToggle() === true) {
+    await playSound('sounds/cairnsuccess.wav', 50)
+  }
 }
 
 /**
@@ -95,7 +98,7 @@ function notificationDoneCallback() {
 
 /**
  * Sets the extension badge.
- * @param text Max 4 character string.
+ * @param {string} text Max 4 character string.
  */
 function setExtensionBadge(text) {
   chrome.action.setBadgeText({
@@ -106,6 +109,41 @@ function setExtensionBadge(text) {
   });
 }
 
+/**
+ * Plays audio files from extension service background workers.
+ * Unfortunately, we have to create a visible html page to play sounds.
+ * It is not possible to play audio from a background worker!
+ *
+ * Waiting for Offscreen windows which are currently in beta.
+ * With this we wouldn't have to use nasty "invisible" popups.
+ *
+ * See: https://stackoverflow.com/questions/67437180/play-audio-from-background-script-in-chrome-extention-manifest-v3
+ * @param {string} source - path of the audio file
+ * @param {number} volumePercent - volume of the playback
+ */
+async function playSound(source = '/sounds/cairnsuccess.wav', volumePercent = 100) {
+  const volume = volumePercent / 100
+  const soundFilePath = '/sounds/cairnsuccess.wav'
+  const soundFileLengthMs = 2700 // 2652
+
+  let url = chrome.runtime.getURL('audio.html?');
+  const parameters = {
+    volume: volume,
+    src: soundFilePath,
+    length: soundFileLengthMs
+  };
+  url += (new URLSearchParams(parameters)).toString();
+
+  chrome.windows.create({
+    type: 'popup',
+    focused: false,
+    top: 1,
+    left: 1,
+    height: 1,
+    width: 1,
+    url,
+  })
+}
 
 console.log(`[background] Starting diablo2.io task loop (runs every ${DIABLO2IO_FETCH_INTERVAL_SECONDS} seconds).`)
 setInterval(runDiablo2ioTask, DIABLO2IO_FETCH_INTERVAL_SECONDS * 1000);

@@ -1,5 +1,6 @@
 let dcloneProgressDiv = document.getElementById("dcloneProgress");
 let jspToggleInput = document.getElementById("toggleJsp");
+let soundToggleInput = document.getElementById("toggleSound");
 let alertLevelInput = document.getElementById("alertLevel");
 
 /**
@@ -117,6 +118,7 @@ function createProgressBar(progress, total) {
  */
 async function initExtensionConfig() {
   alertLevelInput.value = await getAlertLevelThreshold();
+  soundToggleInput.checked = await getSoundToggle();
   jspToggleInput.checked = await getD2jspToggle();
 }
 
@@ -137,6 +139,11 @@ function addEventListeners() {
     console.log(`[popup.js] The alert level changed from ${alertLevelThreshold[ALERT_LEVEL_STORAGE_KEY]} to ${newAlertLevelThreshold}`)
     alertLevelThreshold[ALERT_LEVEL_STORAGE_KEY] = newAlertLevelThreshold;
     chrome.storage.local.set(alertLevelThreshold);
+  }, false)
+
+  soundToggleInput.addEventListener('click', async (e) => {
+    console.debug(e);
+    await setSoundToggle(e.target.checked)
   }, false)
 
   jspToggleInput.addEventListener('click', async (e) => {

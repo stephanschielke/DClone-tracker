@@ -1,8 +1,9 @@
 // Diablo2.io DCloner Progress Settings
 // TODO put this in extension options
-const DIABLO2IO_FETCH_INTERVAL_SECONDS = 30;
+const DIABLO2IO_FETCH_INTERVAL_SECONDS = 60;
 const DIABLO2IO_CONFIG_STORAGE_KEY = "alertToggleStates";
 const ALERT_LEVEL_STORAGE_KEY = "alertLevelThreshold";
+const SOUND_TOGGLE_STORAGE_KEY = "sound";
 const DIABLO2IO_API_ENDPOINT = 'https://diablo2.io/dclone_api.php'
 
 const TOTAL_DCLONE_STATES = 6;
@@ -121,10 +122,31 @@ async function setToggleStatus(entryId, value) {
  * @returns {Promise<number>}
  */
 async function getAlertLevelThreshold() {
-  const alertLevelThesholdStorage = await chrome.storage.local.get({ [ALERT_LEVEL_STORAGE_KEY]: DEFAULT_ALERT_LEVEL_THRESHOLD });
-  const alertLevelThreshold = alertLevelThesholdStorage[ALERT_LEVEL_STORAGE_KEY];
+  const alertLevelThresholdStorage = await chrome.storage.local.get({ [ALERT_LEVEL_STORAGE_KEY]: DEFAULT_ALERT_LEVEL_THRESHOLD });
+  const alertLevelThreshold = alertLevelThresholdStorage[ALERT_LEVEL_STORAGE_KEY];
   console.info(`[diablo2io.js] Currently configured alert level threshold: ${alertLevelThreshold}`);
   return alertLevelThreshold
+}
+
+/**
+ * Gets the current value for the d2jsp.org toggle.
+ * @returns {Promise<boolean>}
+ */
+async function getSoundToggle() {
+  const soundStorage = await chrome.storage.local.get(SOUND_TOGGLE_STORAGE_KEY)
+  const toggleValue = soundStorage[SOUND_TOGGLE_STORAGE_KEY];
+  console.debug(`[diablo2io.js] Currently configured sound toggle: ${toggleValue}`);
+  return toggleValue
+}
+
+/**
+ * Sets the d2jsp.org toggle.
+ * @param {boolean} toggleValue Boolean value for new toggle state.
+ * @returns {Promise<void>}
+ */
+async function setSoundToggle(toggleValue) {
+  console.debug(`[diablo2io.js] Storing sound toggle: ${toggleValue}`);
+  await chrome.storage.local.set({ [SOUND_TOGGLE_STORAGE_KEY]: toggleValue });
 }
 
 

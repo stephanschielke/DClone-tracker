@@ -192,27 +192,36 @@
 <body>
 <div style="flex-flow: row nowrap;">
     <div style="display: flex; margin-bottom: 5px">
-        <div style="padding-right: 10px">
+        <div style="margin-right: 10px">
             Alert Threshold:
             <input type="range" id="alertLevel" min="1" max="6"
-                   style="width: 100px; margin-right: 10px; margin-top: 4px;">
+                   style="width: 100px;">
             <label for="alertLevel"></label>
         </div>
 
         <div style="margin-right: 5px;">
-            Activity Alert (d2jsp.org):
+            Sound:
+        </div>
+        <div style="margin-right: 10px; margin-top: 0px;" class="checkbox">
+            <section class="model-1">
+                <input type="checkbox" id="toggleSound"><label for="toggleSound"></label>
+            </section>
         </div>
 
-        <section class="model-1" style="margin-right: 50px; margin-top: 3px;">
-            <div class="checkbox">
+        <div style="margin-right: 5px;">
+            d2jsp.org Whisper:
+        </div>
+        <div style="margin-right: 10px; margin-top: 0px;" class="checkbox">
+            <section class="model-1">
                 <input type="checkbox" id="toggleJsp"><label for="toggleJsp"></label>
-            </div>
-        </section>
+            </section>
+        </div>
     </div>
     <div style="width: 800px;" id="dcloneProgress">loading...</div>
     <div>Data courtesy of
         <a href="https://diablo2.io/" target="_blank" rel="noopener">diablo2.io</a>.
-        <a href="https://diablo2.io/forums/diablo-clone-uber-diablo-tracker-public-api-t906872.html" target="_blank" rel="noopener"> API</a>
+        <a href="https://diablo2.io/forums/diablo-clone-uber-diablo-tracker-public-api-t906872.html" target="_blank"
+           rel="noopener"> API</a>
     </div>
 </div>
 
