@@ -15,6 +15,7 @@ async function initExtensionPopup() {
 
   const toggleConfig = await getToggleStates();
   const dcloneProgress = await fetchDiablo2IoDcloneProgress()
+  // TODO sort via the API
   dcloneProgress.sort((a, b) => (a.ladder - b.ladder || a.hc - b.hc || a.region.localeCompare(b.region)));
 
   createTrackerTable(dcloneProgress, toggleConfig)
