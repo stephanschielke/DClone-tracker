@@ -1,114 +1,114 @@
 try {
-  importScripts("util.js");
+  importScripts("diablo2io.js", "jsporg.js");
 } catch (e) {
-  console.log(e);
+  console.error(e);
 }
 
-let intervalInSeconds = 10;
-// set current alert level to 5. So 5 or 6 will trigger alert.
-// let alertLevel = 2;
+/**
+ * Task to check the DClone progress reported to Diablo2.io
+ * Fetches the latest progress from the diablo2.io API
+ * and checks if user wants to be alerted for certain region/ladder/hc updates
+ * based on the user-configured alert level threshold.
+ * @returns {Promise<void>}
+ */
+async function runDiablo2ioTask() {
 
+  const alertLevelThreshold = await getAlertLevelThreshold()
+  const toggleConfig = await getToggleStates()
+  const dcloneProgress = await fetchDiablo2IoDcloneProgress()
 
-let jspIntervalInSeconds = 30;
-let keyword = 'dclone';
-let LOCAL_KEY = "key";
-let ALERT_LEVEL_KEY = "alert";
-let JSP_TOGGLE_KEY = "jsp";
-
-async function looping() {
-
-  console.log("[background] d2 start fetching data every " + intervalInSeconds + " seconds.")
-  var result = await fetch('https://diablo2.io/dclone_api.php')
-
-  // console.log("[background] " + result);
-
-  if (result.status === 200) {
-    var text = await result.json();
-    var results = jsonParser(text);
-    var msg = "";
-
-    var alertConfig = await chrome.storage.local.get(ALERT_LEVEL_KEY);
-    var alertLevel = alertConfig[ALERT_LEVEL_KEY] || 4;
-
-    console.log(`[background]-alert config- level: ${alertLevel}`);
-
-    for (let result of results) {
-      if (result.progress >= alertLevel) {
-        var key = result.ladder + "_" + result.hc + "_" + result.region;
-        console.log(`[background]-${key}`)
-
-        var data = await chrome.storage.local.get(LOCAL_KEY);
-        var stats = data[LOCAL_KEY] || "{}";
-        console.log(`[background]-${stats}`)
-        if (stats[key] != true) {
-          console.log("-----" + key + "------triggered, but not toggled!")
-        } else {
-          chrome.action.setBadgeText({
-            text: 'NEW'
-          });
-          chrome.action.setBadgeBackgroundColor({
-            color: [255, 0, 0, 255]
-          });
-
-          msg = "Prime evil is coming!";
-          // may add some details in msg later.
-          toPopup(msg);
-          return;
-        }
+  for (let entry of dcloneProgress) {
+    const entryId = entryIdForEntry(entry)
+    const progress = Number(entry.progress)
+    if (progress === TOTAL_DCLONE_STATES) {
+      console.log(`[background] Progress is at 6. Always notify the user about dclone spawns.`)
+      alertUserForEntry(entry)
+    } else if (progress === 1 || alertLevelThreshold === 1) {
+      console.debug(`[background] Progress is at 1 or user doesn't want any notifications. Nothing to do here.`)
+    } else if (entry.progress >= alertLevelThreshold) {
+      // Check if we need to alert the user
+      console.log(`[background] Checking alert configuration for ${entryId}.`)
+      if (toggleConfig[entryId] === true) {
+        alertUserForEntry(entry)
+      } else {
+        // User disabled alert for this entry
+        console.log(`[background] ${entryId} progress is above alert threshold of ${alertLevelThreshold}.`)
       }
     }
-  } else {
-    console.log(`[background]-error-${result}`);
   }
 }
 
-function toPopup(msg) {
+
+/**
+ * Alert the user for a specific dclone progress entry.
+ * @param entry A diablo2.io dclone progress entry.
+ */
+function alertUserForEntry(entry) {
+  // Unfortunately, no new line breaks are allowed. Keeping it short but precise.
+  const title = `${PROGRESS_MAPPING[entry.progress]} (${entry.progress}/${TOTAL_DCLONE_STATES})`
+  const popupMessage = `Log in with your ${HC_SC_MAPPING[entry.hc]} ${LADDER_MAPPING[entry.ladder]} character to ${REGION_MAPPING[entry.region]} before it's too late!`;
+  createPopupNotification(title, popupMessage);
+  setExtensionBadge('NEW')
+}
+
+/**
+ * Fetches the d2jsp.org d2r main page and scans the page for D2JSP_SEARCH_KEYWORD.
+ * If D2JSP_SEARCH_KEYWORD is found notify the user.
+ * @returns {Promise<void>}
+ */
+async function runD2jspTask() {
+  const jspToggleActivated = await getD2jspToggle()
+  if (jspToggleActivated === true) {
+    const responseText = await fetchD2jspForumPage()
+    if (responseText.toLowerCase().indexOf(D2JSP_SEARCH_KEYWORD.toLowerCase()) >= 0) {
+      console.log("d2jsp talking about dclone");
+      const title = 'Something is up at d2jsp.org'
+      const popupMessage = `People are talking about "${D2JSP_SEARCH_KEYWORD}" at d2jsp.org!`;
+      createPopupNotification(title, popupMessage);
+      setExtensionBadge('JSP')
+    }
+  }
+}
+
+/**
+ * Creates and sends a popup notification to the user.
+ * @param title The title of the popup notification.
+ * @param message The message of the popup notification.
+ */
+function createPopupNotification(title, message) {
   var options = {
     type: "basic",
-    title: "Dclone tracker alert",
-    message: msg,
+    title: title,
+    message: message,
     iconUrl: "images/icon.png"
   };
 
-
-  chrome.notifications.create(options, callback);
+  chrome.notifications.create(options, notificationDoneCallback);
 }
 
-function callback() {
-  console.log("[background] send notifications.");
-
+/**
+ * Callback for the popup notification
+ */
+function notificationDoneCallback() {
+  console.log("[background] Notification sent.");
 }
 
-function optionChecker() {
-  // reset state according to option parameters.
+/**
+ * Sets the extension badge.
+ * @param text Max 4 character string.
+ */
+function setExtensionBadge(text) {
+  chrome.action.setBadgeText({
+    text: text
+  });
+  chrome.action.setBadgeBackgroundColor({
+    color: [255, 255, 0, 255]
+  });
 }
 
-async function d2jspTracker() {
-  console.log("[background] jsp start fetching data every " + jspIntervalInSeconds + " seconds.")
-  var jspConfig = await chrome.storage.local.get(JSP_TOGGLE_KEY);
-  var jspToggle = jspConfig[JSP_TOGGLE_KEY] || true;
-  console.log("[background]-jsp config- toggle jsp:${jspToggle}");
-  if (jspToggle) {
-    var result = await fetch('https://forums.d2jsp.org/forum.php?f=271&t=5')
-    console.log("[background] " + result);
-    var v = await result.text()
-    if (v.toLowerCase().indexOf(keyword) >= 0) {
-      console.log("d2jsp talking about dclone");
-      chrome.action.setBadgeText({
-        text: 'jsp'
-      });
-      chrome.action.setBadgeBackgroundColor({
-        color: [255, 0, 0, 255]
-      });
 
-      msg = "jsp dclone topics.";
-      // may add some details in msg later.
-      toPopup(msg);
-    }
-  }
-}
+console.log(`[background] Starting diablo2.io task loop (runs every ${DIABLO2IO_FETCH_INTERVAL_SECONDS} seconds).`)
+setInterval(runDiablo2ioTask, DIABLO2IO_FETCH_INTERVAL_SECONDS * 1000);
 
-setInterval(looping, intervalInSeconds * 1000);
-setInterval(d2jspTracker, jspIntervalInSeconds * 1000);
-
-optionChecker()
+console.log(`[background] Starting d2jsp.org search task loop (runs every ${D2JSP_FETCH_INTERVAL_SECONDS} seconds).`)
+setInterval(runD2jspTask, D2JSP_FETCH_INTERVAL_SECONDS * 1000);
