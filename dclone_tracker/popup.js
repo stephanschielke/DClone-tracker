@@ -32,7 +32,7 @@ function createTrackerTable(dcloneProgress, toggleConfig) {
   const table = document.createElement('table');
   table.className = 'styled-table'
   const tableHeaderRow = table.createTHead().insertRow(0)
-  for (entry of ['Alert', 'Progress', 'Ladder', 'Mode', 'Region', 'Updated at']) {
+  for (entry of ['Alert', 'Progress', 'Ladder', 'Mode', 'Region', 'Updated']) {
     tableHeaderRow.insertCell().innerHTML = entry
   }
 
@@ -46,7 +46,10 @@ function createTrackerTable(dcloneProgress, toggleConfig) {
     tableRow.insertCell().innerHTML = LADDER_MAPPING[entry.ladder]
     tableRow.insertCell().innerHTML = HC_SC_MAPPING[entry.hc]
     tableRow.insertCell().innerHTML = REGION_MAPPING[entry.region]
-    tableRow.insertCell().innerHTML = displayTimeForEntry(entry)
+    // TODO display a link to diablo2.io if date is too old
+    // TODO display time since instead
+    const timeAgo = moment.unix(entry.timestamped).startOf('second').fromNow()
+    tableRow.insertCell().innerHTML = timeAgo //displayTimeForEntry(timeAgo)
   }
 
   dcloneProgressDiv.innerHTML = table.outerHTML;
@@ -86,6 +89,7 @@ function createToggleSection(index, entryId, checked) {
 
 /**
  * Creates a static progress bar.
+ * TODO create tooltips for PROGRESS_MAPPING when user hovers over div like "Terror gazes upon Sanctuary"
  * @param progress The current progress.
  * @param total The total achievable progress.
  * @returns {HTMLElement}
