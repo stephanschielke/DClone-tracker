@@ -20,10 +20,7 @@ async function runDiablo2ioTask() {
   for (let entry of dcloneProgress) {
     const entryId = entryIdForEntry(entry)
     const progress = Number(entry.progress)
-    if (progress === TOTAL_DCLONE_STATES) {
-      console.log(`[background] Progress is at 6. Always notify the user about dclone spawns.`)
-      alertUserForEntry(entry)
-    } else if (progress === 1 || alertLevelThreshold === 1) {
+    if (progress === 1 || alertLevelThreshold === 1) {
       console.debug(`[background] Progress is at 1 or user doesn't want any notifications. Nothing to do here.`)
     } else if (entry.progress >= alertLevelThreshold) {
       // Check if we need to alert the user
