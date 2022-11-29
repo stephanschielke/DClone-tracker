@@ -1,6 +1,6 @@
 // Diablo2.io DCloner Progress Settings
 // TODO put this in extension options
-const DIABLO2IO_FETCH_INTERVAL_SECONDS = 60;
+const DIABLO2IO_FETCH_INTERVAL_SECONDS = 60 // TODO guarantee to have at least 60s;
 const DIABLO2IO_CONFIG_STORAGE_KEY = "alertToggleStates";
 const ALERT_LEVEL_STORAGE_KEY = "alertLevelThreshold";
 const SOUND_TOGGLE_STORAGE_KEY = "sound";
@@ -56,18 +56,20 @@ const PROGRESS_MAPPING = {
  */
 async function fetchDiablo2IoDcloneProgress() {
   console.log(`[diablo2io.js] Fetching data from ${DIABLO2IO_API_ENDPOINT}.`)
-  const apiResponse = await fetch(DIABLO2IO_API_ENDPOINT)
-  console.dir(apiResponse)
+  try {
+    const apiResponse = await fetch(DIABLO2IO_API_ENDPOINT)
+    console.dir(apiResponse)
 
-  if (apiResponse.ok === true) {
-    const apiResponseJson = await apiResponse.json();
-    console.log(`[diablo2io.js] Diablo2.io API result:`);
-    console.table(apiResponseJson)
-    return apiResponseJson
-  } else {
+    if (apiResponse.ok === true) {
+      const apiResponseJson = await apiResponse.json();
+      console.log(`[diablo2io.js] Diablo2.io API result:`);
+      console.table(apiResponseJson)
+      return apiResponseJson
+    }
+  } catch (error) {
     const errorMessage = `Unable to fetch from ${DIABLO2IO_API_ENDPOINT}.`
     console.error(`[diablo2io.js] Error:${errorMessage}.`);
-    throw Error(errorMessage)
+    return {}
   }
 }
 
