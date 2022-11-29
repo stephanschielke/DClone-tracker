@@ -11,13 +11,10 @@
         html, body {
             overflow: hidden;
             background: #eee;
-        }
-
-        section {
-            /*float: left;*/
-            /*min-width: 150px;*/
-            /*width: 33.33%;*/
-            /*padding: 25px 0;*/
+            width: 800px;
+            height: 600px;
+            font-size: 1em;
+            margin: 0;
         }
 
         /*=====================*/
@@ -123,11 +120,11 @@
 
         .styled-table {
             border-collapse: collapse;
-            margin: 0 0;
-            font-size: 0.75em;
+            font-size: 1.4em;
             font-family: sans-serif;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
-            margin-bottom: 1em;
+            margin-bottom: 0.75em;
+            width: 95%
         }
 
         .styled-table thead tr {
@@ -138,7 +135,7 @@
 
         .styled-table th,
         .styled-table td {
-            padding: 5px 15px;
+            padding: 5px 10px;
         }
 
         .styled-table tbody tr {
@@ -191,7 +188,7 @@
 </head>
 <body>
 <div style="flex-flow: row nowrap;">
-    <div style="display: flex; margin-bottom: 5px">
+    <div style="display: flex; margin-bottom: 10px; margin-top: 10px; margin-left: 10px">
         <div style="margin-right: 10px">
             Alert Threshold:
             <input type="range" id="alertLevel" min="1" max="6"
@@ -202,7 +199,7 @@
         <div style="margin-right: 5px;">
             Sound:
         </div>
-        <div style="margin-right: 10px; margin-top: 0px;" class="checkbox">
+        <div style="margin-right: 10px;" class="checkbox">
             <section class="model-1">
                 <input type="checkbox" id="toggleSound"><label for="toggleSound"></label>
             </section>
@@ -211,21 +208,23 @@
         <div style="margin-right: 5px;">
             d2jsp.org Whisper:
         </div>
-        <div style="margin-right: 10px; margin-top: 0px;" class="checkbox">
+        <div style="margin-right: 10px;" class="checkbox">
             <section class="model-1">
                 <input type="checkbox" id="toggleJsp"><label for="toggleJsp"></label>
             </section>
         </div>
     </div>
-    <div style="width: 800px;" id="dcloneProgress">loading...</div>
-    <div>Data courtesy of
+    <div style="margin-left: 10px" id="dcloneProgress">loading...</div>
+    <div style="margin-left: 10px">Data courtesy of
         <a href="https://diablo2.io/" target="_blank" rel="noopener">diablo2.io</a>.
+        Please consider updating the status
+        <a href="https://diablo2.io/dclonetracker.php" target="_blank" rel="noopener">here</a>
         <a href="https://diablo2.io/forums/diablo-clone-uber-diablo-tracker-public-api-t906872.html" target="_blank"
-           rel="noopener"> API</a>
+           rel="noopener">(API)</a>
     </div>
 </div>
 
-
+<script src="moment.min.js"></script>
 <script src="diablo2io.js"></script>
 <script src="jsporg.js"></script>
 <script src="popup.js"></script>
