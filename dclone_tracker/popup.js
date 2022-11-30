@@ -187,7 +187,7 @@ async function initExtensionConfig() {
 }
 
 async function addEventListeners() {
-  dcloneProgress.addEventListener('click', async (e) => {
+  dcloneProgressDiv.addEventListener('click', async (e) => {
     console.debug(e);
     if (e.target.tagName === 'INPUT') {
       const newStatus = e.target.checked;

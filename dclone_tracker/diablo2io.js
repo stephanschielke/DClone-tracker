@@ -51,11 +51,12 @@ export const PROGRESS_MAPPING = {
   6: "Diablo has invaded Sanctuary"
 }
 
-function Diablo2ioDCloneProgress(region, ladder, hc, progress) {
+function Diablo2ioDCloneProgress(region, ladder, hc, progress, timestamped) {
   this.region = region;
   this.ladder = ladder;
   this.hc = hc;
   this.progress = progress
+  this.timestamped = timestamped
 }
 
 /**
@@ -73,7 +74,9 @@ export async function fetchDiablo2IoDcloneProgress() {
       console.log(`[diablo2io.js] Diablo2.io API result:`);
       console.table(apiResponseJson)
 
-      return apiResponseJson.map((entry) => new Diablo2ioDCloneProgress(entry.region, entry.ladder, entry.hc, entry.progress))
+      return apiResponseJson.map((entry) =>
+        new Diablo2ioDCloneProgress(entry.region, entry.ladder, entry.hc, entry.progress, entry.timestamped)
+      )
     }
   } catch (error) {
     const errorMessage = `Unable to fetch from ${DIABLO2IO_API_ENDPOINT}.`
