@@ -51,6 +51,15 @@ export const PROGRESS_MAPPING = {
   6: "Diablo has invaded Sanctuary"
 }
 
+/**
+ * Constructor for Diablo2.io API responses
+ * @param region REGION_MAPPING
+ * @param ladder LADDER_MAPPING
+ * @param hc HC_SC_MAPPING
+ * @param progress 1-6
+ * @param timestamped unix timestamp
+ * @constructor
+ */
 function Diablo2ioDCloneProgress(region, ladder, hc, progress, timestamped) {
   this.region = region;
   this.ladder = ladder;
@@ -61,7 +70,7 @@ function Diablo2ioDCloneProgress(region, ladder, hc, progress, timestamped) {
 
 /**
  * Fetches raw dclone progress data from the diablo2.io API.
- * @returns {Promise<Array<Diablo2ioDCloneProgress>>} A table of dclone entry rows per region/ladder/hc
+ * @returns {Promise<Array<Diablo2ioDCloneProgress>||Object>} A table of dclone entry rows per region/ladder/hc
  */
 export async function fetchDiablo2IoDcloneProgress() {
   console.log(`[diablo2io.js] Fetching data from ${DIABLO2IO_API_ENDPOINT}.`)
