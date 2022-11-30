@@ -98,6 +98,7 @@ Wishlist
     - Already submitted but is pending a review by Google
 - Create Chrome extension options page
 - Create tooltips when hovering over the progress bar
+- Cache results for the popup. Invalidate/update cache on timer trigger
 - Display the alert threshold with a concrete number
 - Let user control if they want to be re-notified
 - Let user decide how often to poll for updates
