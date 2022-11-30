@@ -1,6 +1,6 @@
 // TODO put this in extension options
 // TODO guarantee to have at least 60s;
-export const DIABLO2IO_FETCH_INTERVAL_SECONDS = 600;
+export const DIABLO2IO_FETCH_INTERVAL_SECONDS = 60;
 export const TOTAL_DCLONE_STATES = 6;
 
 const DIABLO2IO_CONFIG_STORAGE_KEY = "alertToggleStates";
@@ -51,9 +51,16 @@ export const PROGRESS_MAPPING = {
   6: "Diablo has invaded Sanctuary"
 }
 
+function Diablo2ioDCloneProgress(region, ladder, hc, progress) {
+  this.region = region;
+  this.ladder = ladder;
+  this.hc = hc;
+  this.progress = progress
+}
+
 /**
  * Fetches raw dclone progress data from the diablo2.io API.
- * @returns {Promise<Array<Array<string>>>} A table of dclone entry rows per region/ladder/hc
+ * @returns {Promise<Array<Diablo2ioDCloneProgress>>} A table of dclone entry rows per region/ladder/hc
  */
 export async function fetchDiablo2IoDcloneProgress() {
   console.log(`[diablo2io.js] Fetching data from ${DIABLO2IO_API_ENDPOINT}.`)
@@ -65,7 +72,8 @@ export async function fetchDiablo2IoDcloneProgress() {
       const apiResponseJson = await apiResponse.json();
       console.log(`[diablo2io.js] Diablo2.io API result:`);
       console.table(apiResponseJson)
-      return apiResponseJson
+
+      return apiResponseJson.map((entry) => new Diablo2ioDCloneProgress(entry.region, entry.ladder, entry.hc, entry.progress))
     }
   } catch (error) {
     const errorMessage = `Unable to fetch from ${DIABLO2IO_API_ENDPOINT}.`
@@ -102,7 +110,7 @@ export async function getToggleStates() {
  * @returns {Promise<void>}
  */
 export async function setToggleStatus(entryId, value) {
-  const toggleConfig = getToggleStates() // TODO add await
+  const toggleConfig = await getToggleStates()
   toggleConfig[entryId] = value;
   console.debug(`[diablo2io.js] Storing toggle status ${entryId}=${value}`);
 
