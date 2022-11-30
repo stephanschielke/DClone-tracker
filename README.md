@@ -36,7 +36,11 @@ miss a diablo clone event ever again!
 Installation
 ------------
 
-Until this extension is approved by Google and available in the Chrome Web Store you have to manually install it.
+### Via the Chrome Store
+
+* [Diablo Clone Tracker](https://chrome.google.com/webstore/detail/diablo-clone-tracker/mfjeadanndcldhgglfppiphmmjbklohf)
+* Note the version in the official store might lag behind
+  the [latest release](https://github.com/stephanschielke/DClone-tracker/releases)
 
 ### Via the `.crx` file
 
@@ -45,16 +49,6 @@ Until this extension is approved by Google and available in the Chrome Web Store
 * Click `Add extension`
 
 ![Installation Popup](./img/install_extension.png)
-
-### Via the `.zip` file
-
-* Download the [dclone_tracker.zip](https://github.com/stephanschielke/DClone-tracker/blob/main/dclone_tracker.zip)
-  file
-* Unzip the file
-* Go to [chrome://extensions/](chrome://extensions/)
-* Enable `Developer mode`
-* Click `Load unpacked`
-* Select the `dclone_tracker` folder
 
 ### From the source code via `git`
 
