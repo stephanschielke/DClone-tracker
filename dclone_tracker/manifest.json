@@ -24,13 +24,10 @@
   },
   "permissions": [
     "storage",
-    "activeTab",
-    "scripting",
-    "webRequest",
     "notifications"
   ],
   "host_permissions": [
-    "https://diablo2.io/",
-    "https://forums.d2jsp.org/"
+    "https://diablo2.io/dclone_api.php*",
+    "https://forums.d2jsp.org/forum.php?f=271&t=5"
   ]
 }
