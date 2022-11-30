@@ -1,6 +1,6 @@
-// Diablo2.io DCloner Progress Settings
 // TODO put this in extension options
-const DIABLO2IO_FETCH_INTERVAL_SECONDS = 60 // TODO guarantee to have at least 60s;
+// TODO guarantee to have at least 60s;
+const DIABLO2IO_FETCH_INTERVAL_SECONDS = 60
 const DIABLO2IO_CONFIG_STORAGE_KEY = "alertToggleStates";
 const ALERT_LEVEL_STORAGE_KEY = "alertLevelThreshold";
 const SOUND_TOGGLE_STORAGE_KEY = "sound";
