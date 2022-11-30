@@ -1,0 +1,14 @@
+{
+  "rules": {
+    "quotes": ["error", "double"]
+  },
+
+  "overrides": [
+    {
+      "files": ["dclone_tracker/*.js"],
+      "rules": {
+        "quotes": ["error", "single"]
+      }
+    }
+  ]
+}
