@@ -80,7 +80,7 @@ function createPopupNotification(title, message) {
     type: "basic",
     title: title,
     message: message,
-    iconUrl: "images/icon.png"
+    iconUrl: "images/bluecharm_graphic.png"
   };
 
   chrome.notifications.create(options, notificationDoneCallback);
