@@ -42,7 +42,9 @@ Until this extension is approved by Google and available in the Chrome Web Store
 
 * Download the [dclone_tracker.crx](https://github.com/stephanschielke/DClone-tracker/blob/main/dclone_tracker.crx) file
 * Drag and drop the file into your Chrome browser window
-* Click `Add extension` ![Installation Popup](./img/install_extension.png)
+* Click `Add extension`
+
+![Installation Popup](./img/install_extension.png)
 
 ### Via the `.zip` file
 
