@@ -24,7 +24,7 @@ async function initExtensionPopup() {
 }
 
 /**
- * Constucts the main table based on dclone progress data and user toggle configuration.
+ * Constructs the main table based on dclone progress data and user toggle configuration.
  * @param dcloneProgress The raw diablo2.io dclone progress API data
  * @param toggleConfig The user toggle configuration
  */
@@ -46,13 +46,54 @@ function createTrackerTable(dcloneProgress, toggleConfig) {
     tableRow.insertCell().innerHTML = LADDER_MAPPING[entry.ladder]
     tableRow.insertCell().innerHTML = HC_SC_MAPPING[entry.hc]
     tableRow.insertCell().innerHTML = REGION_MAPPING[entry.region]
-    // TODO display a link to diablo2.io if date is too old
-    // TODO display time since instead
-    const timeAgo = moment.unix(entry.timestamped).startOf('second').fromNow()
-    tableRow.insertCell().innerHTML = timeAgo //displayTimeForEntry(timeAgo)
+    tableRow.insertCell().innerHTML = createUpdatedCellContent(entry)
   }
 
   dcloneProgressDiv.innerHTML = table.outerHTML;
+}
+
+/**
+ * Creates the html content for an "Updated" cell.
+ * Calculates the time ago since update in a human readable format.
+ * If updated time is too old will display a warning symbol and link to diablo2.io dclone tracker page.
+ * @param entry A raw diablo2.io dclone progress row.
+ * @param outdatedHours {number} threshold in hours to determine if a timestamp is outdated.
+ * @returns {string|*} An HTML string
+ */
+function createUpdatedCellContent(entry, outdatedHours = 24) {
+  const lastUpdated = moment.unix(entry.timestamped)
+  const timeAgo = lastUpdated.startOf('second').fromNow()
+
+  if (moment.duration(moment().diff(lastUpdated)).asHours() >= outdatedHours) {
+    const warnImage = document.createElement('img')
+    warnImage.setAttribute('src', 'images/warning_icon.svg')
+    warnImage.setAttribute('style', 'height: auto;')
+    warnImage.setAttribute('width', '20px')
+
+    const updateLink = createUpdateLink(timeAgo, entry.region, entry.ladder, entry.hc, entry.progress)
+    return `${updateLink.outerHTML} ${warnImage.outerHTML}`
+  }
+
+  return timeAgo
+}
+
+/**
+ * Creates a link to the diablo2.io dclone tracker update page
+ * for a specific region, ladder, hc with prefilled progress.
+ * @param text The text to display in the anchor.
+ * @param region The region. See REGION_MAPPING.
+ * @param ladder The ladder. See LADDER_MAPPING.
+ * @param hc The game mode. See HC_SC_MAPPING.
+ * @param progress The suggested progress. See PROGRESS_MAPPING.
+ * @returns {HTMLAnchorElement} A usable anchor element
+ */
+function createUpdateLink(text, region, ladder, hc, progress) {
+  const anchor = document.createElement('a')
+  anchor.setAttribute('href', `https://diablo2.io/dcloneupdate.php?region=${region}&ladder=${ladder}&hc=${hc}&progress=${progress}&mode=submit`)
+  anchor.setAttribute('target', '_blank')
+  anchor.setAttribute('rel', 'noopener')
+  anchor.innerText = text
+  return anchor
 }
 
 /**
