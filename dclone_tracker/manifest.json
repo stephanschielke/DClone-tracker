@@ -24,7 +24,8 @@
   },
   "permissions": [
     "storage",
-    "notifications"
+    "notifications",
+    "alarms"
   ],
   "host_permissions": [
     "https://diablo2.io/dclone_api.php*",

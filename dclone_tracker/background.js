@@ -18,7 +18,7 @@ async function runDiablo2ioTask() {
   const dcloneProgress = await fetchDiablo2IoDcloneProgress()
 
   for (let entry of dcloneProgress) {
-    const entryId = entryIdForEntry(entry)
+    const entryId = await entryIdForEntry(entry)
     const progress = Number(entry.progress)
     if (progress === 1 || alertLevelThreshold === 1) {
       console.debug(`[background] Progress is at 1 or user doesn't want any notifications. Nothing to do here.`)
@@ -26,7 +26,7 @@ async function runDiablo2ioTask() {
       // Check if we need to alert the user
       console.log(`[background] Checking alert configuration for ${entryId}.`)
       if (toggleConfig[entryId] === true) {
-        alertUserForEntry(entry)
+        await alertUserForEntry(entry)
       } else {
         // User disabled alert for this entry
         console.log(`[background] ${entryId} progress is above alert threshold of ${alertLevelThreshold}.`)
@@ -45,7 +45,7 @@ async function alertUserForEntry(entry) {
   const title = `${PROGRESS_MAPPING[entry.progress]} (${entry.progress}/${TOTAL_DCLONE_STATES})`
   const popupMessage = `Log in with your ${HC_SC_MAPPING[entry.hc]} ${LADDER_MAPPING[entry.ladder]} character to ${REGION_MAPPING[entry.region]} before it's too late!`;
   createPopupNotification(title, popupMessage);
-  setExtensionBadge('NEW')
+  await setExtensionBadge('NEW')
   if (await getSoundToggle() === true) {
     await playSound('sounds/cairnsuccess.wav', 50)
   }
@@ -65,7 +65,7 @@ async function runD2jspTask() {
       const title = 'Something is up at d2jsp.org'
       const popupMessage = `People are talking about "${D2JSP_SEARCH_KEYWORD}" at d2jsp.org!`;
       createPopupNotification(title, popupMessage);
-      setExtensionBadge('JSP')
+      await setExtensionBadge('JSP')
     }
   }
 }
@@ -97,11 +97,11 @@ function notificationDoneCallback() {
  * Sets the extension badge.
  * @param {string} text Max 4 character string.
  */
-function setExtensionBadge(text) {
-  chrome.action.setBadgeText({
+async function setExtensionBadge(text) {
+  await chrome.action.setBadgeText({
     text: text
   });
-  chrome.action.setBadgeBackgroundColor({
+  await chrome.action.setBadgeBackgroundColor({
     color: [255, 255, 0, 255]
   });
 }
@@ -131,7 +131,7 @@ async function playSound(source = '/sounds/cairnsuccess.wav', volumePercent = 10
   };
   url += (new URLSearchParams(parameters)).toString();
 
-  chrome.windows.create({
+  await chrome.windows.create({
     type: 'popup',
     focused: false,
     top: 1,
@@ -143,7 +143,20 @@ async function playSound(source = '/sounds/cairnsuccess.wav', volumePercent = 10
 }
 
 console.log(`[background] Starting diablo2.io task loop (runs every ${DIABLO2IO_FETCH_INTERVAL_SECONDS} seconds).`)
-setInterval(runDiablo2ioTask, DIABLO2IO_FETCH_INTERVAL_SECONDS * 1000);
-
+chrome.alarms.create('runDiablo2ioTask', { periodInMinutes: (DIABLO2IO_FETCH_INTERVAL_SECONDS / 60) });
 console.log(`[background] Starting d2jsp.org search task loop (runs every ${D2JSP_FETCH_INTERVAL_SECONDS} seconds).`)
-setInterval(runD2jspTask, D2JSP_FETCH_INTERVAL_SECONDS * 1000);
+chrome.alarms.create('runD2jspTask', { periodInMinutes: (D2JSP_FETCH_INTERVAL_SECONDS / 60) });
+
+chrome.alarms.onAlarm.addListener((alarm) => {
+  console.dir(alarm)
+  switch (alarm.name) {
+    case 'runDiablo2ioTask':
+      console.log('Starting runDiablo2ioTask')
+      runDiablo2ioTask()
+      break
+    case 'runD2jspTask':
+      console.log('Starting runD2jspTask')
+      runD2jspTask()
+      break
+  }
+});

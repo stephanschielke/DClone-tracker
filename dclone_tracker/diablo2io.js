@@ -79,20 +79,8 @@ async function fetchDiablo2IoDcloneProgress() {
  * @param entryRow The raw Diablo.io row with region, ladder and hc attributes.
  * @returns {string} A unique id for the Diablo.io entry
  */
-function entryIdForEntry(entryRow) {
+async function entryIdForEntry(entryRow) {
   return `${REGION_MAPPING[entryRow.region]}//${LADDER_MAPPING[entryRow.ladder]}//${HC_SC_MAPPING[entryRow.hc]}`;
-}
-
-/**
- * Converts the raw diablo2.io UNIX timestamp from the API response
- * into a human-readable date time with default locale settings.
- * @param entryRow A single row from the diablo2.io API response. Must contain timestamped attribute.
- * @returns {string} A human-readable date time string.
- */
-function displayTimeForEntry(entryRow) {
-  const unixTimestamp = Number(entryRow.timestamped)
-  const dateTime = new Date(unixTimestamp * 1000)
-  return `${dateTime.toLocaleDateString()} ${dateTime.toLocaleTimeString()}`
 }
 
 /**
@@ -113,7 +101,7 @@ async function getToggleStates() {
  * @returns {Promise<void>}
  */
 async function setToggleStatus(entryId, value) {
-  var toggleConfig = await getToggleStates()
+  const toggleConfig = getToggleStates()
   toggleConfig[entryId] = value;
   console.debug(`[diablo2io.js] Storing toggle status ${entryId}=${value}`);
   await chrome.storage.local.set({ [DIABLO2IO_CONFIG_STORAGE_KEY]: toggleConfig });

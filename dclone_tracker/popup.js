@@ -12,15 +12,15 @@ let alertLevelInput = document.getElementById("alertLevel");
  */
 async function initExtensionPopup() {
   console.log("[popup.js] Initialising Extension Popup...")
-  resetExtensionBadge()
+  await resetExtensionBadge()
 
   const toggleConfig = await getToggleStates();
   const dcloneProgress = await fetchDiablo2IoDcloneProgress()
   // TODO sort via the API
   dcloneProgress.sort((a, b) => (a.ladder - b.ladder || a.hc - b.hc || a.region.localeCompare(b.region)));
 
-  createTrackerTable(dcloneProgress, toggleConfig)
-  addEventListeners();
+  await createTrackerTable(dcloneProgress, toggleConfig)
+  await addEventListeners();
 }
 
 /**
@@ -28,7 +28,7 @@ async function initExtensionPopup() {
  * @param dcloneProgress The raw diablo2.io dclone progress API data
  * @param toggleConfig The user toggle configuration
  */
-function createTrackerTable(dcloneProgress, toggleConfig) {
+async function createTrackerTable(dcloneProgress, toggleConfig) {
   const table = document.createElement('table');
   table.className = 'styled-table'
   const tableHeaderRow = table.createTHead().insertRow(0)
@@ -39,14 +39,14 @@ function createTrackerTable(dcloneProgress, toggleConfig) {
   const tableBody = table.createTBody()
   for (const [index, entry] of dcloneProgress.entries()) {
     const tableRow = tableBody.insertRow()
-    const entryId = entryIdForEntry(entry)
+    const entryId = await entryIdForEntry(entry)
 
-    tableRow.insertCell().innerHTML = createToggleSection(index, entryId, toggleConfig[entryId]).outerHTML
-    tableRow.insertCell().innerHTML = createProgressBar(entry.progress, TOTAL_DCLONE_STATES).outerHTML
+    tableRow.insertCell().innerHTML = (await createToggleSection(index, entryId, toggleConfig[entryId])).outerHTML
+    tableRow.insertCell().innerHTML = (await createProgressBar(entry.progress, TOTAL_DCLONE_STATES)).outerHTML
     tableRow.insertCell().innerHTML = LADDER_MAPPING[entry.ladder]
     tableRow.insertCell().innerHTML = HC_SC_MAPPING[entry.hc]
     tableRow.insertCell().innerHTML = REGION_MAPPING[entry.region]
-    tableRow.insertCell().innerHTML = createUpdatedCellContent(entry)
+    tableRow.insertCell().innerHTML = await createUpdatedCellContent(entry)
   }
 
   dcloneProgressDiv.innerHTML = table.outerHTML;
@@ -60,7 +60,7 @@ function createTrackerTable(dcloneProgress, toggleConfig) {
  * @param outdatedHours {number} threshold in hours to determine if a timestamp is outdated.
  * @returns {string|*} An HTML string
  */
-function createUpdatedCellContent(entry, outdatedHours = 24) {
+async function createUpdatedCellContent(entry, outdatedHours = 24) {
   const lastUpdated = moment.unix(entry.timestamped)
   const timeAgo = lastUpdated.startOf('second').fromNow()
 
@@ -70,7 +70,7 @@ function createUpdatedCellContent(entry, outdatedHours = 24) {
     warnImage.setAttribute('style', 'height: auto;')
     warnImage.setAttribute('width', '20px')
 
-    const updateLink = createUpdateLink(timeAgo, entry.region, entry.ladder, entry.hc, entry.progress)
+    const updateLink = await createUpdateLink(timeAgo, entry.region, entry.ladder, entry.hc, entry.progress)
     return `${updateLink.outerHTML} ${warnImage.outerHTML}`
   }
 
@@ -87,7 +87,7 @@ function createUpdatedCellContent(entry, outdatedHours = 24) {
  * @param progress The suggested progress. See PROGRESS_MAPPING.
  * @returns {HTMLAnchorElement} A usable anchor element
  */
-function createUpdateLink(text, region, ladder, hc, progress) {
+async function createUpdateLink(text, region, ladder, hc, progress) {
   const anchor = document.createElement('a')
   anchor.setAttribute('href', `https://diablo2.io/dcloneupdate.php?region=${region}&ladder=${ladder}&hc=${hc}&progress=${progress}&mode=submit`)
   anchor.setAttribute('target', '_blank')
@@ -103,7 +103,7 @@ function createUpdateLink(text, region, ladder, hc, progress) {
  * @param checked true if should be checked
  * @returns {HTMLElement}
  */
-function createToggleSection(index, entryId, checked) {
+async function createToggleSection(index, entryId, checked) {
   const toggle = document.createElement('section');
   toggle.className = 'model-1'
 
@@ -135,7 +135,7 @@ function createToggleSection(index, entryId, checked) {
  * @param total The total achievable progress.
  * @returns {HTMLElement}
  */
-function createProgressBar(progress, total) {
+async function createProgressBar(progress, total) {
   const div = document.createElement('div');
   div.className = 'container'
 
@@ -167,7 +167,7 @@ async function initExtensionConfig() {
   jspToggleInput.checked = await getD2jspToggle();
 }
 
-function addEventListeners() {
+async function addEventListeners() {
   dcloneProgress.addEventListener('click', async (e) => {
     console.debug(e);
     if (e.target.tagName === 'INPUT') {
@@ -179,11 +179,11 @@ function addEventListeners() {
 
   alertLevelInput.addEventListener('click', async (e) => {
     console.debug(e);
-    var newAlertLevelThreshold = e.target.value;
-    var alertLevelThreshold = await chrome.storage.local.get(ALERT_LEVEL_STORAGE_KEY);
+    const newAlertLevelThreshold = e.target.value;
+    const alertLevelThreshold = await chrome.storage.local.get(ALERT_LEVEL_STORAGE_KEY);
     console.log(`[popup.js] The alert level changed from ${alertLevelThreshold[ALERT_LEVEL_STORAGE_KEY]} to ${newAlertLevelThreshold}`)
     alertLevelThreshold[ALERT_LEVEL_STORAGE_KEY] = newAlertLevelThreshold;
-    chrome.storage.local.set(alertLevelThreshold);
+    await chrome.storage.local.set(alertLevelThreshold);
   }, false)
 
   soundToggleInput.addEventListener('click', async (e) => {
@@ -200,8 +200,8 @@ function addEventListeners() {
 /**
  * Removes the badge from the extension icon.
  */
-function resetExtensionBadge() {
-  chrome.action.setBadgeText({
+async function resetExtensionBadge() {
+  await chrome.action.setBadgeText({
     text: ""
   });
 }
