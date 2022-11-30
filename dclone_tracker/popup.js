@@ -1,3 +1,22 @@
+import {
+  HC_SC_MAPPING,
+  LADDER_MAPPING,
+  REGION_MAPPING,
+  TOTAL_DCLONE_STATES,
+  entryIdForEntry,
+  fetchDiablo2IoDcloneProgress,
+  getAlertLevelThreshold,
+  getSoundToggle,
+  getToggleStates,
+  setAlertLevelThreshold,
+  setSoundToggle,
+  setToggleStatus
+} from "./diablo2io.js";
+import {
+  getD2jspToggle,
+  setD2jspToggle
+} from "./jsporg.js";
+
 let dcloneProgressDiv = document.getElementById("dcloneProgress");
 let jspToggleInput = document.getElementById("toggleJsp");
 let soundToggleInput = document.getElementById("toggleSound");
@@ -32,14 +51,14 @@ async function createTrackerTable(dcloneProgress, toggleConfig) {
   const table = document.createElement('table');
   table.className = 'styled-table'
   const tableHeaderRow = table.createTHead().insertRow(0)
-  for (entry of ['Alert', 'Progress', 'Ladder', 'Mode', 'Region', 'Updated']) {
-    tableHeaderRow.insertCell().innerHTML = entry
+  for (let columnName of ['Alert', 'Progress', 'Ladder', 'Mode', 'Region', 'Updated']) {
+    tableHeaderRow.insertCell().innerHTML = columnName
   }
 
   const tableBody = table.createTBody()
   for (const [index, entry] of dcloneProgress.entries()) {
     const tableRow = tableBody.insertRow()
-    const entryId = await entryIdForEntry(entry)
+    const entryId = entryIdForEntry(entry)
 
     tableRow.insertCell().innerHTML = (await createToggleSection(index, entryId, toggleConfig[entryId])).outerHTML
     tableRow.insertCell().innerHTML = (await createProgressBar(entry.progress, TOTAL_DCLONE_STATES)).outerHTML
@@ -54,7 +73,7 @@ async function createTrackerTable(dcloneProgress, toggleConfig) {
 
 /**
  * Creates the html content for an "Updated" cell.
- * Calculates the time ago since update in a human readable format.
+ * Calculates the time ago since update in a human-readable format.
  * If updated time is too old will display a warning symbol and link to diablo2.io dclone tracker page.
  * @param entry A raw diablo2.io dclone progress row.
  * @param outdatedHours {number} threshold in hours to determine if a timestamp is outdated.
@@ -100,7 +119,7 @@ async function createUpdateLink(text, region, ladder, hc, progress) {
  * Creates an interactive checkbox toggle element.
  * @param index The index of the toggle
  * @param entryId The diablo2.io dclone progress entryId
- * @param checked true if should be checked
+ * @param checked true if it should be checked
  * @returns {HTMLElement}
  */
 async function createToggleSection(index, entryId, checked) {
@@ -142,7 +161,7 @@ async function createProgressBar(progress, total) {
   const progressDiv = document.createElement('div');
   progressDiv.className = 'progress-segment'
 
-  for (var i = 0; i < total; i++) {
+  for (let i = 0; i < total; i++) {
     const itemDiv = document.createElement('div');
     itemDiv.classList.add('item')
     if (i < progress) {
@@ -171,7 +190,7 @@ async function addEventListeners() {
   dcloneProgress.addEventListener('click', async (e) => {
     console.debug(e);
     if (e.target.tagName === 'INPUT') {
-      var newStatus = e.target.checked;
+      const newStatus = e.target.checked;
       const entryId = e.target.dataset.entryId
       await setToggleStatus(entryId, newStatus)
     }
@@ -179,11 +198,7 @@ async function addEventListeners() {
 
   alertLevelInput.addEventListener('click', async (e) => {
     console.debug(e);
-    const newAlertLevelThreshold = e.target.value;
-    const alertLevelThreshold = await chrome.storage.local.get(ALERT_LEVEL_STORAGE_KEY);
-    console.log(`[popup.js] The alert level changed from ${alertLevelThreshold[ALERT_LEVEL_STORAGE_KEY]} to ${newAlertLevelThreshold}`)
-    alertLevelThreshold[ALERT_LEVEL_STORAGE_KEY] = newAlertLevelThreshold;
-    await chrome.storage.local.set(alertLevelThreshold);
+    await setAlertLevelThreshold(e.target.value)
   }, false)
 
   soundToggleInput.addEventListener('click', async (e) => {

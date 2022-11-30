@@ -1,8 +1,21 @@
-try {
-  importScripts("diablo2io.js", "jsporg.js");
-} catch (e) {
-  console.error(e);
-}
+import {
+  HC_SC_MAPPING,
+  LADDER_MAPPING,
+  PROGRESS_MAPPING,
+  REGION_MAPPING,
+  TOTAL_DCLONE_STATES,
+  entryIdForEntry,
+  fetchDiablo2IoDcloneProgress,
+  getAlertLevelThreshold,
+  getSoundToggle,
+  getToggleStates, DIABLO2IO_FETCH_INTERVAL_SECONDS
+} from './diablo2io.js';
+import {
+  D2JSP_FETCH_INTERVAL_SECONDS,
+  D2JSP_SEARCH_KEYWORD,
+  fetchD2jspForumPage,
+  getD2jspToggle
+} from './jsporg.js';
 
 /**
  * Task to check the DClone progress reported to Diablo2.io
@@ -18,7 +31,7 @@ async function runDiablo2ioTask() {
   const dcloneProgress = await fetchDiablo2IoDcloneProgress()
 
   for (let entry of dcloneProgress) {
-    const entryId = await entryIdForEntry(entry)
+    const entryId = entryIdForEntry(entry)
     const progress = Number(entry.progress)
     if (progress === 1 || alertLevelThreshold === 1) {
       console.debug(`[background] Progress is at 1 or user doesn't want any notifications. Nothing to do here.`)
@@ -76,7 +89,7 @@ async function runD2jspTask() {
  * @param message The message of the popup notification.
  */
 function createPopupNotification(title, message) {
-  var options = {
+  const options = {
     type: "basic",
     title: title,
     message: message,
@@ -125,9 +138,9 @@ async function playSound(source = '/sounds/cairnsuccess.wav', volumePercent = 10
 
   let url = chrome.runtime.getURL('audio.html?');
   const parameters = {
-    volume: volume,
+    volume: volume.toString(),
     src: soundFilePath,
-    length: soundFileLengthMs
+    length: soundFileLengthMs.toString()
   };
   url += (new URLSearchParams(parameters)).toString();
 
@@ -147,16 +160,16 @@ chrome.alarms.create('runDiablo2ioTask', { periodInMinutes: (DIABLO2IO_FETCH_INT
 console.log(`[background] Starting d2jsp.org search task loop (runs every ${D2JSP_FETCH_INTERVAL_SECONDS} seconds).`)
 chrome.alarms.create('runD2jspTask', { periodInMinutes: (D2JSP_FETCH_INTERVAL_SECONDS / 60) });
 
-chrome.alarms.onAlarm.addListener((alarm) => {
+chrome.alarms.onAlarm.addListener(async (alarm) => {
   console.dir(alarm)
   switch (alarm.name) {
     case 'runDiablo2ioTask':
       console.log('Starting runDiablo2ioTask')
-      runDiablo2ioTask()
+      await runDiablo2ioTask()
       break
     case 'runD2jspTask':
       console.log('Starting runD2jspTask')
-      runD2jspTask()
+      await runD2jspTask()
       break
   }
 });
