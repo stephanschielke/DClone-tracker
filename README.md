@@ -65,6 +65,27 @@ Until this extension is approved by Google and available in the Chrome Web Store
 * Click `Load unpacked`
 * Select the `dclone_tracker` folder
 
+Usage
+-----
+Open the extension by clicking on it.
+
+Select an alert threshold (`1,2,3,4,5,6`) with the slider. The default is `4` (`"Terror spreads across Sanctuary"`).
+You can disable alerts and notifications entirely by setting the alert threshold to `1`.
+The maximum setting is `6`, which will alert you only if the dclone event has been triggered (and was reported).
+
+Enable or disable the alert for specific regions and game modes.
+
+Enable or disable a sound notification that goes along the Chrome notifications when triggered.
+*This is an experimental feature and due to a lack of functionality in Chrome requires a popup :frowning:.*
+
+Once a progress is **equal or higher** than your configured alert threshold for any of your subscribed regions and game
+modes a notification will pop up.
+
+If the report data is stale (last report older than 1 day) then a warning is displayed. Please use the provided link to
+update the current progress yourself.
+
+You can enable notifications every time someone at d2jsp.org is talking about "Dclone".
+
 Report Issues
 -------------
 Use the [GitHub Issues](https://github.com/stephanschielke/DClone-tracker/issues) function to report bugs or feature
